@@ -57,6 +57,20 @@ e.g.
 """
 color = lambda: tuple([random.randint(0, 255) for i in range(3)])  # lambda function for random color, not a constant.
 GRAVITY = Vector2(0, 0.86)  # Vector2 is a pygame
+# tile size (width and height of map tiles / sprites)
+TILE_SIZE = 32
+TILE_HALF = TILE_SIZE // 2
+# player visual size (smaller than tile if desired)
+PLAYER_SIZE = 20
+PLAYER_HALF = PLAYER_SIZE // 2
+# Debug / tuning flags
+DEBUG_EASY_MODE = False  # toggled by pressing E
+DEBUG_NOCLIP = False     # toggled by pressing G (ignore spike and side deaths)
+DEBUG_INVINCIBLE = False  # toggled by pressing X (test mode: no damage at all)
+GRAVITY_BASE = GRAVITY.y
+JUMP_BASE = 10.5  # was 10, slight increase for clearing 2-tile spike gaps
+EASY_GRAVITY = 0.3
+EASY_JUMP = 12
 
 """
 Main player class
@@ -80,10 +94,10 @@ class Player(pygame.sprite.Sprite):
         self.platforms = platforms  # obstacles but create a class variable for it
         self.died = False  # player died?
         self.win = False  # player beat level?
-
-        self.image = pygame.transform.smoothscale(image, (32, 32))
+        # scale player separately from tile size so we can make the player smaller
+        self.image = pygame.transform.smoothscale(image, (PLAYER_SIZE, PLAYER_SIZE))
         self.rect = self.image.get_rect(center=pos)  # get rect gets a Rect object from the image
-        self.jump_amount = 10  # jump strength
+        self.jump_amount = JUMP_BASE  # jump strength
         self.particles = []  # player trail
         self.isjump = False  # is the player jumping?
         self.vel = Vector2(0, 0)  # velocity starts at zero
@@ -106,7 +120,7 @@ class Player(pygame.sprite.Sprite):
                 self.particles.remove(particle)
 
     def collide(self, yvel, platforms):
-        global coins
+        global coins, DEBUG_NOCLIP
 
         for p in platforms:
             if pygame.sprite.collide_rect(self, p):
@@ -123,7 +137,12 @@ class Player(pygame.sprite.Sprite):
                     self.win = True
 
                 if isinstance(p, Spike):
-                    self.died = True  # die on spike
+                    if not (DEBUG_NOCLIP or DEBUG_INVINCIBLE):
+                        # shrink spike effective rect (top part only)
+                        spike_effective = p.rect.inflate(-14, -8).copy()
+                        spike_effective.bottom = p.rect.bottom - 6
+                        if self.rect.colliderect(spike_effective):
+                            self.died = True
 
                 if isinstance(p, Coin):
                     # keeps track of all coins throughout the whole game(total of 6 is possible)
@@ -152,7 +171,9 @@ class Player(pygame.sprite.Sprite):
                         """otherwise, if player collides with a block, he/she dies."""
                         self.vel.x = 0
                         self.rect.right = p.rect.left  # dont let player go through walls
-                        self.died = True
+                        if not DEBUG_NOCLIP:
+                            if not DEBUG_INVINCIBLE:
+                                self.died = True
 
     def jump(self):
         self.vel.y = -self.jump_amount  # players vertical velocity is negative so ^
@@ -279,8 +300,8 @@ def init_level(map):
 
             if col == "End":
                 End(avatar, (x, y), elements)
-            x += 32
-        y += 32
+            x += TILE_SIZE
+        y += TILE_SIZE
         x = 0
 
 
@@ -440,7 +461,6 @@ def draw_stats(surf, money=0):
     rect(surf, WHITE, outline_rect, 3, 4)
     screen.blit(tries, (BAR_LENGTH, 0))
 
-
 def wait_for_key():
     """separate game loop for waiting for a key press while still running game loop
     """
@@ -466,13 +486,13 @@ def wait_for_key():
 
 def coin_count(coins):
     """counts coins"""
-    if coins >= 3:
+    if coins >= 3: 
         coins = 3
     coins += 1
     return coins
 
 
-def resize(img, size=(32, 32)):
+def resize(img, size=(TILE_SIZE, TILE_SIZE)):
     """resize images
     :param img: image to resize
     :type img: im not sure, probably an object
@@ -503,15 +523,15 @@ elements = pygame.sprite.Group()
 
 # images
 spike = pygame.image.load(os.path.join("images", "obj-spike.png"))
-spike = resize(spike)
+spike = resize(spike, (TILE_SIZE, TILE_SIZE))
 coin = pygame.image.load(os.path.join("images", "coin.png"))
-coin = pygame.transform.smoothscale(coin, (32, 32))
+coin = pygame.transform.smoothscale(coin, (TILE_SIZE, TILE_SIZE))
 block = pygame.image.load(os.path.join("images", "block_1.png"))
-block = pygame.transform.smoothscale(block, (32, 32))
+block = pygame.transform.smoothscale(block, (TILE_SIZE, TILE_SIZE))
 orb = pygame.image.load((os.path.join("images", "orb-yellow.png")))
-orb = pygame.transform.smoothscale(orb, (32, 32))
+orb = pygame.transform.smoothscale(orb, (TILE_SIZE, TILE_SIZE))
 trick = pygame.image.load((os.path.join("images", "obj-breakable.png")))
-trick = pygame.transform.smoothscale(trick, (32, 32))
+trick = pygame.transform.smoothscale(trick, (TILE_SIZE, TILE_SIZE))
 
 #  ints
 fill = 0
@@ -530,8 +550,8 @@ win_cubes = []
 # initialize level with
 levels = ["level_1.csv", "level_2.csv"]
 level_list = block_map(levels[level])
-level_width = (len(level_list[0]) * 32)
-level_height = len(level_list) * 32
+level_width = (len(level_list[0]) * TILE_SIZE)
+level_height = len(level_list) * TILE_SIZE
 init_level(level_list)
 
 # set window title suitable for game
@@ -555,6 +575,14 @@ tip = font.render("tip: tap and hold for the first few seconds of the level", Tr
 
 while not done:
     keys = pygame.key.get_pressed()
+    # Handle debug toggles (once per keydown, so we rely on event loop below to flip states)
+    # Apply easy mode values
+    if DEBUG_EASY_MODE:
+        GRAVITY.y = EASY_GRAVITY
+        player.jump_amount = EASY_JUMP
+    else:
+        GRAVITY.y = GRAVITY_BASE
+        player.jump_amount = JUMP_BASE
 
     if not start:
         wait_for_key()
@@ -585,11 +613,11 @@ while not done:
     draw_stats(screen, coin_count(coins))
 
     if player.isjump:
-        """rotate the player by an angle and blit it if player is jumping"""
+        # rotate the player by an angle and blit it if player is jumping
         angle -= 8.1712  # this may be the angle needed to do a 360 deg turn in the length covered in one jump by player
-        blitRotate(screen, player.image, player.rect.center, (16, 16), angle)
+        blitRotate(screen, player.image, player.rect.center, (PLAYER_HALF, PLAYER_HALF), angle)
     else:
-        """if player.isjump is false, then just blit it normally(by using Group().draw() for sprites"""
+        # if player.isjump is false, then just blit it normally (by using Group().draw() for sprites)
         player_sprite.draw(screen)  # draw player sprite group
     elements.draw(screen)  # draw all other obstacles
 
@@ -600,6 +628,12 @@ while not done:
             if event.key == pygame.K_ESCAPE:
                 """User friendly exit"""
                 done = True
+            elif event.key == pygame.K_e:
+                DEBUG_EASY_MODE = not DEBUG_EASY_MODE
+            elif event.key == pygame.K_g:
+                DEBUG_NOCLIP = not DEBUG_NOCLIP
+            elif event.key == pygame.K_x:
+                DEBUG_INVINCIBLE = not DEBUG_INVINCIBLE
             if event.key == pygame.K_2:
                 """change level by keypad"""
                 player.jump_amount += 1
