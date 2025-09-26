@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "684753848387",
+    "project_id": "sleep-music-cfab6",
+    "storage_bucket": "sleep-music-cfab6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:684753848387:android:d1937c14030858a7df6cf6",
+        "android_client_info": {
+          "package_name": "com.maviqus.SleepMusic"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzqYxFo8lWAtgJUlq-ffbQQrQRoGl6W3Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

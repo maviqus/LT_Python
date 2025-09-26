@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:music_sleeping/modules/home/controllers/home_controller.dart';
+import 'package:sleep_music/modules/home/controllers/home_controller.dart';
 
 class HomeBinding extends Bindings {
   @override
