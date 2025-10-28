@@ -48,6 +48,7 @@ dependencies:
   just_audio: ^0.9.39
   cloud_firestore: ^5.6.12
   cached_network_image: ^3.4.1
+  image_picker: ^1.0.4
 
 dev_dependencies:
   flutter_test:

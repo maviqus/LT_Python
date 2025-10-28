@@ -31,34 +31,76 @@ class UserInfoCard extends StatelessWidget {
           child: Obx(
             () => Column(
               children: [
-                Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.3),
-                      width: 2,
-                    ),
-                  ),
-                  child: CircleAvatar(
-                    radius: 50,
-                    backgroundColor: Colors.white.withValues(alpha: 0.1),
-                    backgroundImage: controller.hasPhoto
-                        ? NetworkImage(controller.userPhotoUrl!)
-                        : null,
-                    child: !controller.hasPhoto
-                        ? Icon(
-                            Icons.person,
-                            size: 50,
-                            color: Colors.white,
-                            shadows: const [
-                              Shadow(
-                                blurRadius: 8.0,
-                                color: Colors.black26,
-                                offset: Offset(0, 1),
+                GestureDetector(
+                  onTap: controller.showAvatarOptions,
+                  child: Stack(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.3),
+                            width: 2,
+                          ),
+                        ),
+                        child: CircleAvatar(
+                          radius: 50,
+                          backgroundColor: Colors.white.withValues(alpha: 0.1),
+                          backgroundImage: controller.hasPhoto
+                              ? NetworkImage(controller.userPhotoUrl!)
+                              : null,
+                          child: !controller.hasPhoto
+                              ? Icon(
+                                  Icons.person,
+                                  size: 50,
+                                  color: Colors.white,
+                                  shadows: const [
+                                    Shadow(
+                                      blurRadius: 8.0,
+                                      color: Colors.black26,
+                                      offset: Offset(0, 1),
+                                    ),
+                                  ],
+                                )
+                              : null,
+                        ),
+                      ),
+                      if (controller.isUpdatingAvatar.value)
+                        Positioned.fill(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.black.withValues(alpha: 0.5),
+                            ),
+                            child: const Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2,
                               ),
-                            ],
-                          )
-                        : null,
+                            ),
+                          ),
+                        ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Colors.blue,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.white,
+                              width: 2,
+                            ),
+                          ),
+                          child: const Icon(
+                            Icons.camera_alt,
+                            size: 16,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 16),

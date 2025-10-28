@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sleep_music/models/music.dart';
 
@@ -15,6 +17,7 @@ class FirebaseBackend {
   );
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
 
   Future<List<String>> getCategories() async {
     try {
@@ -55,7 +58,6 @@ class FirebaseBackend {
       return [];
     }
   }
-  
 
   Future<Music?> getMusicById(String category, String musicId) async {
     try {
@@ -131,5 +133,43 @@ class FirebaseBackend {
   Future<void> signOut() async {
     await _auth.signOut();
     await _googleSignIn.signOut();
+  }
+
+  Future<String?> uploadUserAvatar(File imageFile, String userId) async {
+    try {
+      final ref = _storage.ref().child('user_avatars/$userId/avatar.jpg');
+      final uploadTask = ref.putFile(imageFile);
+
+      final snapshot = await uploadTask;
+      final downloadUrl = await snapshot.ref.getDownloadURL();
+
+      return downloadUrl;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<bool> updateUserAvatarUrl(String avatarUrl) async {
+    try {
+      final user = _auth.currentUser;
+      if (user == null) return false;
+
+      await user.updatePhotoURL(avatarUrl);
+      await user.reload();
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> deleteUserAvatar(String userId) async {
+    try {
+      final ref = _storage.ref().child('user_avatars/$userId/avatar.jpg');
+      await ref.delete();
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }
