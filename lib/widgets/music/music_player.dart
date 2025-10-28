@@ -75,16 +75,55 @@ class MusicPlayer extends StatelessWidget {
                                   width: 1,
                                 ),
                               ),
-                              child: coverUrl.isNotEmpty
-                                  ? Image.network(
-                                      coverUrl,
-                                      width: 50,
-                                      height: 50,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (_, __, ___) =>
-                                          _defaultCover(),
-                                    )
-                                  : _defaultCover(),
+                              child: Stack(
+                                children: [
+                                  coverUrl.isNotEmpty
+                                      ? Image.network(
+                                          coverUrl,
+                                          width: 50,
+                                          height: 50,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (_, __, ___) =>
+                                              _defaultCover(),
+                                        )
+                                      : _defaultCover(),
+                                  // Fade loading overlay for album cover
+                                  if (controller.isLoadingWithFade)
+                                    AnimatedOpacity(
+                                      opacity:
+                                          controller.currentLoadingOpacity *
+                                          0.7,
+                                      duration: const Duration(
+                                        milliseconds: 400,
+                                      ),
+                                      child: Container(
+                                        width: 50,
+                                        height: 50,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                          color: Colors.black.withValues(
+                                            alpha: 0.3,
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: AnimatedOpacity(
+                                            opacity: 0.6,
+                                            duration: const Duration(
+                                              milliseconds: 800,
+                                            ),
+                                            child: Icon(
+                                              Icons.music_note,
+                                              color: Colors.white,
+                                              size: 16,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -158,12 +197,49 @@ class MusicPlayer extends StatelessWidget {
                                     sigmaX: 5,
                                     sigmaY: 5,
                                   ),
-                                  child: Icon(
-                                    controller.isPlaying.value
-                                        ? Icons.pause
-                                        : Icons.play_arrow_rounded,
-                                    color: Colors.white,
-                                    size: 24,
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      Icon(
+                                        controller.isPlaying.value
+                                            ? Icons.pause
+                                            : Icons.play_arrow_rounded,
+                                        color: Colors.white,
+                                        size: 24,
+                                      ),
+                                      // Fade loading overlay
+                                      if (controller.isLoadingWithFade)
+                                        AnimatedOpacity(
+                                          opacity:
+                                              controller.currentLoadingOpacity,
+                                          duration: const Duration(
+                                            milliseconds: 300,
+                                          ),
+                                          child: Container(
+                                            width: 40,
+                                            height: 40,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Colors.black.withValues(
+                                                alpha: 0.4,
+                                              ),
+                                            ),
+                                            child: Center(
+                                              child: AnimatedOpacity(
+                                                opacity: 0.8,
+                                                duration: const Duration(
+                                                  milliseconds: 1000,
+                                                ),
+                                                child: Icon(
+                                                  Icons.more_horiz,
+                                                  color: Colors.white,
+                                                  size: 16,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                    ],
                                   ),
                                 ),
                               ),

@@ -1,8 +1,9 @@
 profile
 anonymous
 edit name,info
-random avatar, input name
+ input name
 noti
+get ip, anonymous
 
-
+chay nen 
 

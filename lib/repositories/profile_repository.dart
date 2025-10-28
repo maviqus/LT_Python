@@ -13,6 +13,7 @@ class ProfileRepository {
   Future<ApiResponse<String>> changeAvatar(File imageFile) async {
     try {
       final user = FirebaseAuth.instance.currentUser;
+
       if (user == null) {
         return ApiResponse.error('User not authenticated');
       }
@@ -58,6 +59,27 @@ class ProfileRepository {
       return ApiResponse.success(deleteSuccess);
     } catch (e) {
       return ApiResponse.error('Error removing avatar: ${e.toString()}');
+    }
+  }
+
+  Future<ApiResponse<bool>> updateDisplayName(String displayName) async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        return ApiResponse.error('User not authenticated');
+      }
+
+      final updateSuccess = await _firebaseBackend.updateDisplayName(
+        displayName,
+      );
+
+      if (!updateSuccess) {
+        return ApiResponse.error('Failed to update display name');
+      }
+
+      return ApiResponse.success(true);
+    } catch (e) {
+      return ApiResponse.error('Error updating display name: ${e.toString()}');
     }
   }
 }

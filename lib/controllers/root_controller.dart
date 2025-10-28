@@ -7,6 +7,7 @@ import 'package:sleep_music/modules/music/controllers/music_controller.dart';
 import 'package:sleep_music/modules/profile/pages/profile_page.dart';
 import 'package:sleep_music/modules/profile/controllers/profile_controller.dart';
 import 'package:sleep_music/modules/music/pages/music_page.dart';
+import 'package:sleep_music/modules/alarm/pages/alarm_page.dart';
 
 class RootController extends GetxController {
   RxInt currentIndex = 0.obs;
@@ -39,7 +40,7 @@ class RootController extends GetxController {
 
   List<Widget> pages = [
     HomePage(),
-    Scaffold(body: Center(child: Text('Alarm Page'))),
+    const AlarmPage(),
     const MusicPage(),
     ProfilePage(),
   ];

@@ -4,24 +4,26 @@ import 'package:sleep_music/modules/authencation/pages/sign_in_page.dart';
 import 'package:sleep_music/modules/home/bindings/home_binding.dart';
 import 'package:sleep_music/modules/profile/pages/profile_page.dart';
 import 'package:sleep_music/modules/profile/bindings/profile_binding.dart';
-import 'package:sleep_music/modules/slash/pages/slash_page.dart';
 import 'package:sleep_music/modules/music/bindings/music_bindings.dart';
 import 'package:flutter/material.dart';
 import 'package:sleep_music/widgets/shared/root.dart';
 import 'package:sleep_music/modules/music/pages/music_page.dart';
+import 'package:sleep_music/modules/slash/pages/slash_page.dart';
+import 'package:sleep_music/modules/slash/bindings/slash_binding.dart';
 
 class RouterCustom {
   static final initial = RouterName.slash;
   static final pages = [
     GetPage(
-      name: RouterName.root,
-      page: () => HomeRootWidget(),
-      binding: HomeBinding(),
+      name: RouterName.slash,
+      page: () => const SlashPage(),
+      binding: SlashBinding(),
       curve: Curves.easeInOut,
     ),
     GetPage(
-      name: RouterName.slash,
-      page: () => SlashPage(),
+      name: RouterName.root,
+      page: () => HomeRootWidget(),
+      binding: HomeBinding(),
       curve: Curves.easeInOut,
     ),
     GetPage(

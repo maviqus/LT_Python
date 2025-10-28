@@ -12,6 +12,22 @@ class AuthRepository {
     }
   }
 
+  Future<User?> loginAnonymously() async {
+    try {
+      return await FirebaseBackend().loginAnonymously();
+    } catch (e) {
+      throw Exception('Error logging in anonymously: $e');
+    }
+  }
+
+  Future<bool> updateDisplayName(String displayName) async {
+    try {
+      return await FirebaseBackend().updateDisplayName(displayName);
+    } catch (e) {
+      throw Exception('Error updating display name: $e');
+    }
+  }
+
   Future<void> signOut() async {
     await FirebaseBackend().signOut();
   }

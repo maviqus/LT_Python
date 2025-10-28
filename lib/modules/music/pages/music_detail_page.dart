@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:get/get.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:sleep_music/models/music.dart';
 import 'package:sleep_music/controllers/music_player_controller.dart';
 import 'package:sleep_music/widgets/shared/circle_icon_button.dart';
@@ -110,36 +111,7 @@ class MusicDetailPage extends StatelessWidget {
                                   aspectRatio: 1.0,
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(24),
-                                    child: Image.network(
-                                      imagePath,
-                                      fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                            return Container(
-                                              decoration: BoxDecoration(
-                                                color: Colors.white.withValues(alpha: 
-                                                  0.1,
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(24),
-                                              ),
-                                              child: const Center(
-                                                child: Icon(
-                                                  Icons.music_note,
-                                                  size: 100,
-                                                  color: Colors.white,
-                                                  shadows: [
-                                                    Shadow(
-                                                      blurRadius: 10.0,
-                                                      color: Colors.black26,
-                                                      offset: Offset(0, 2),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                    ),
+                                    child: _buildImageWidget(imagePath),
                                   ),
                                 ),
                               ),
@@ -221,5 +193,92 @@ class MusicDetailPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildImageWidget(String imagePath) {
+    if (imagePath.isEmpty) {
+      return Container(
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.05),
+            borderRadius: BorderRadius.circular(24),
+          ),
+        ),
+      );
+    }
+
+    if (imagePath.startsWith('http')) {
+      return CachedNetworkImage(
+        imageUrl: imagePath,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
+        placeholder: (context, url) => Container(
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Center(
+            child: AnimatedOpacity(
+              opacity: 0.3,
+              duration: const Duration(milliseconds: 1000),
+              child: Container(
+                width: double.infinity,
+                height: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(24),
+                ),
+              ),
+            ),
+          ),
+        ),
+        errorWidget: (context, url, error) => Container(
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Container(
+            width: double.infinity,
+            height: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(24),
+            ),
+          ),
+        ),
+        fadeInDuration: const Duration(milliseconds: 300),
+        fadeOutDuration: const Duration(milliseconds: 150),
+      );
+    } else {
+      return Image.asset(
+        imagePath,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
+        errorBuilder: (context, error, stackTrace) {
+          return Container(
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Container(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(24),
+              ),
+            ),
+          );
+        },
+      );
+    }
   }
 }

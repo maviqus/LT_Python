@@ -57,25 +57,7 @@ class MusicPage extends StatelessWidget {
           const SizedBox(height: 16),
           Obx(() {
             if (music.isLoading.value && music.items.isEmpty) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(32.0),
-                  child: Text(
-                    'Loading music...',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.white70,
-                      shadows: [
-                        Shadow(
-                          blurRadius: 8.0,
-                          color: Colors.black26,
-                          offset: Offset(0, 1),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
+              return _buildLoadingPlaceholders();
             }
 
             if (music.error.isNotEmpty) {
@@ -160,6 +142,119 @@ class MusicPage extends StatelessWidget {
           const SizedBox(height: 60),
         ],
       ),
+    );
+  }
+
+  Widget _buildLoadingPlaceholders() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Generate 3 category placeholders
+        for (int categoryIndex = 0; categoryIndex < 3; categoryIndex++) ...[
+          _buildCategoryPlaceholder(),
+          const SizedBox(height: 24),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildCategoryPlaceholder() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Category title placeholder
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            AnimatedOpacity(
+              opacity: 0.4,
+              duration: const Duration(milliseconds: 1000),
+              child: Container(
+                width: 120,
+                height: 16,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
+            AnimatedOpacity(
+              opacity: 0.3,
+              duration: const Duration(milliseconds: 1200),
+              child: Container(
+                width: 60,
+                height: 14,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(7),
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        // Music items placeholder
+        SizedBox(
+          height: 140,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: 5, // Show 5 placeholder items
+            itemBuilder: (context, index) {
+              return Container(
+                width: 110,
+                margin: EdgeInsets.only(right: index == 4 ? 0 : 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Image placeholder
+                    AspectRatio(
+                      aspectRatio: 1.0,
+                      child: AnimatedOpacity(
+                        opacity: 0.4 - (index * 0.05), // Varying opacity
+                        duration: Duration(milliseconds: 800 + (index * 200)),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: AnimatedOpacity(
+                            opacity: 0.2,
+                            duration: Duration(
+                              milliseconds: 1000 + (index * 100),
+                            ),
+                            child: Container(
+                              width: double.infinity,
+                              height: double.infinity,
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.05),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    // Title placeholder
+                    AnimatedOpacity(
+                      opacity: 0.3 - (index * 0.03),
+                      duration: Duration(milliseconds: 900 + (index * 150)),
+                      child: Container(
+                        width: double.infinity,
+                        height: 12,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }

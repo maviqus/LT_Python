@@ -130,6 +130,34 @@ class FirebaseBackend {
     }
   }
 
+  /// Login anonymously
+  Future<User?> loginAnonymously() async {
+    try {
+      final UserCredential userCredential = await _auth.signInAnonymously();
+      return userCredential.user;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// Update user display name
+  Future<bool> updateDisplayName(String displayName) async {
+    try {
+      final user = _auth.currentUser;
+
+      if (user == null) {
+        return false;
+      }
+
+      await user.updateDisplayName(displayName);
+      await user.reload();
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   Future<void> signOut() async {
     await _auth.signOut();
     await _googleSignIn.signOut();
@@ -139,10 +167,8 @@ class FirebaseBackend {
     try {
       final ref = _storage.ref().child('user_avatars/$userId/avatar.jpg');
       final uploadTask = ref.putFile(imageFile);
-
       final snapshot = await uploadTask;
       final downloadUrl = await snapshot.ref.getDownloadURL();
-
       return downloadUrl;
     } catch (e) {
       return null;
@@ -152,7 +178,10 @@ class FirebaseBackend {
   Future<bool> updateUserAvatarUrl(String avatarUrl) async {
     try {
       final user = _auth.currentUser;
-      if (user == null) return false;
+
+      if (user == null) {
+        return false;
+      }
 
       await user.updatePhotoURL(avatarUrl);
       await user.reload();

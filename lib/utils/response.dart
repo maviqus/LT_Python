@@ -13,6 +13,3 @@ class ApiResponse<T> {
     return ApiResponse._(isSuccess: false, errorMessage: message);
   }
 }
-
-// Helper responsive methods for different response types
-// Return true if screen size is small

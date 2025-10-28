@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
-import 'package:sleep_music/controllers/theme_controller.dart';
 
 class ProfileHeader extends StatelessWidget {
   const ProfileHeader({super.key});
@@ -26,32 +25,6 @@ class ProfileHeader extends StatelessWidget {
                   offset: Offset(0, 2),
                 ),
               ],
-            ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              color: Colors.white.withValues(alpha: 0.15),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.3),
-                width: 1,
-              ),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                child: IconButton(
-                  icon: Icon(
-                    themeController.isDarkMode.value
-                        ? Icons.wb_sunny_outlined
-                        : Icons.nightlight_round,
-                    color: Colors.white,
-                  ),
-                  tooltip: 'Chuyển theme',
-                  onPressed: () => themeController.toggleTheme(),
-                ),
-              ),
             ),
           ),
         ],

@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:get/get_navigation/src/routes/transitions_type.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:sleep_music/apps/routers/router_custom.dart';
-import 'package:sleep_music/controllers/theme_controller.dart';
 import 'package:sleep_music/firebase_options.dart';
 import 'package:sleep_music/app/bindings/app_binding.dart';
 
 void main(List<String> args) async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await GetStorage.init();
 
   try {
@@ -24,6 +25,7 @@ void main(List<String> args) async {
   }
 
   runApp(MyApp());
+  FlutterNativeSplash.remove();
 }
 
 class MyApp extends StatelessWidget {
@@ -33,11 +35,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       initialBinding: AppBinding(),
-      theme: lightTheme,
-      darkTheme: darkTheme,
-      themeMode: themeController.isDarkMode.value
-          ? ThemeMode.dark
-          : ThemeMode.light,
       debugShowCheckedModeBanner: false,
       initialRoute: RouterCustom.initial,
       getPages: RouterCustom.pages,

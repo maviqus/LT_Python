@@ -94,28 +94,37 @@ class MusicSectionWidget extends StatelessWidget {
         imageUrl: imagePath,
         fit: BoxFit.cover,
         width: double.infinity,
-        progressIndicatorBuilder: (context, child, loadingProgress) {
-          return Container(
-            color: Colors.grey.shade200,
-            child: Center(
-              child: AnimatedOpacity(
-                opacity: 0.5,
-                duration: const Duration(milliseconds: 300),
-                child: Text(
-                  'Loading...',
-                  style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
-                ),
+        placeholder: (context, url) => Container(
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: AnimatedOpacity(
+            opacity: 0.3,
+            duration: const Duration(milliseconds: 800),
+            child: Container(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(16),
               ),
             ),
-          );
-        },
+          ),
+        ),
         errorWidget: (context, error, stackTrace) {
           return Container(
-            color: Colors.grey.shade300,
-            child: Icon(
-              Icons.music_note,
-              color: Colors.grey.shade600,
-              size: 32,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Container(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(16),
+              ),
             ),
           );
         },
@@ -127,11 +136,17 @@ class MusicSectionWidget extends StatelessWidget {
         width: double.infinity,
         errorBuilder: (context, error, stackTrace) {
           return Container(
-            color: Colors.grey.shade300,
-            child: Icon(
-              Icons.music_note,
-              color: Colors.grey.shade600,
-              size: 32,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Container(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(16),
+              ),
             ),
           );
         },

@@ -486,47 +486,37 @@ class MusicCategoryPage extends StatelessWidget {
         fit: BoxFit.cover,
         width: double.infinity,
         height: double.infinity,
-        progressIndicatorBuilder: (context, child, loadingProgress) {
-          return Container(
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: const Center(
-              child: Text(
-                'Loading...',
-                style: TextStyle(
-                  color: Colors.white70,
-                  fontSize: 10,
-                  shadows: [
-                    Shadow(
-                      blurRadius: 8.0,
-                      color: Colors.black26,
-                      offset: Offset(0, 1),
-                    ),
-                  ],
-                ),
+        placeholder: (context, url) => Container(
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: AnimatedOpacity(
+            opacity: 0.3,
+            duration: const Duration(milliseconds: 800),
+            child: Container(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(8),
               ),
             ),
-          );
-        },
+          ),
+        ),
         errorWidget: (context, error, stackTrace) {
           return Container(
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Icon(
-              Icons.music_note,
-              color: Colors.white,
-              size: 24,
-              shadows: [
-                Shadow(
-                  blurRadius: 8.0,
-                  color: Colors.black26,
-                  offset: Offset(0, 1),
-                ),
-              ],
+            child: Container(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
           );
         },
@@ -543,17 +533,13 @@ class MusicCategoryPage extends StatelessWidget {
               color: Colors.white.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Icon(
-              Icons.music_note,
-              color: Colors.white,
-              size: 24,
-              shadows: [
-                Shadow(
-                  blurRadius: 8.0,
-                  color: Colors.black26,
-                  offset: Offset(0, 1),
-                ),
-              ],
+            child: Container(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
           );
         },

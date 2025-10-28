@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:get/get.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:sleep_music/modules/profile/controllers/profile_controller.dart';
 
 class UserInfoCard extends StatelessWidget {
@@ -22,7 +23,10 @@ class UserInfoCard extends StatelessWidget {
           ],
         ),
         borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.3), width: 1),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.3),
+          width: 1,
+        ),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(32),
@@ -32,7 +36,10 @@ class UserInfoCard extends StatelessWidget {
             () => Column(
               children: [
                 GestureDetector(
-                  onTap: controller.showAvatarOptions,
+                  onTap: controller.changeAvatarFromGallery,
+                  onLongPress: controller.hasPhoto
+                      ? controller.showAvatarOptions
+                      : null,
                   child: Stack(
                     children: [
                       Container(
@@ -43,14 +50,74 @@ class UserInfoCard extends StatelessWidget {
                             width: 2,
                           ),
                         ),
-                        child: CircleAvatar(
-                          radius: 50,
-                          backgroundColor: Colors.white.withValues(alpha: 0.1),
-                          backgroundImage: controller.hasPhoto
-                              ? NetworkImage(controller.userPhotoUrl!)
-                              : null,
-                          child: !controller.hasPhoto
-                              ? Icon(
+                        child: controller.hasPhoto
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(50),
+                                child: CachedNetworkImage(
+                                  imageUrl: controller.userPhotoUrl!,
+                                  width: 100,
+                                  height: 100,
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) => Container(
+                                    width: 100,
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.white.withValues(
+                                        alpha: 0.1,
+                                      ),
+                                    ),
+                                    child: AnimatedOpacity(
+                                      opacity: 0.5,
+                                      duration: const Duration(
+                                        milliseconds: 800,
+                                      ),
+                                      child: Icon(
+                                        Icons.person,
+                                        size: 50,
+                                        color: Colors.white,
+                                        shadows: const [
+                                          Shadow(
+                                            blurRadius: 8.0,
+                                            color: Colors.black26,
+                                            offset: Offset(0, 1),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  errorWidget: (context, url, error) =>
+                                      CircleAvatar(
+                                        radius: 50,
+                                        backgroundColor: Colors.white
+                                            .withValues(alpha: 0.1),
+                                        child: Icon(
+                                          Icons.person,
+                                          size: 50,
+                                          color: Colors.white,
+                                          shadows: const [
+                                            Shadow(
+                                              blurRadius: 8.0,
+                                              color: Colors.black26,
+                                              offset: Offset(0, 1),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                  fadeInDuration: const Duration(
+                                    milliseconds: 200,
+                                  ),
+                                  fadeOutDuration: const Duration(
+                                    milliseconds: 100,
+                                  ),
+                                ),
+                              )
+                            : CircleAvatar(
+                                radius: 50,
+                                backgroundColor: Colors.white.withValues(
+                                  alpha: 0.1,
+                                ),
+                                child: Icon(
                                   Icons.person,
                                   size: 50,
                                   color: Colors.white,
@@ -61,21 +128,38 @@ class UserInfoCard extends StatelessWidget {
                                       offset: Offset(0, 1),
                                     ),
                                   ],
-                                )
-                              : null,
-                        ),
+                                ),
+                              ),
                       ),
                       if (controller.isUpdatingAvatar.value)
                         Positioned.fill(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.black.withValues(alpha: 0.5),
-                            ),
-                            child: const Center(
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2,
+                          child: AnimatedOpacity(
+                            opacity: controller.isUpdatingAvatar.value
+                                ? 1.0
+                                : 0.0,
+                            duration: const Duration(milliseconds: 300),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.black.withValues(alpha: 0.6),
+                              ),
+                              child: Center(
+                                child: AnimatedOpacity(
+                                  opacity: 0.8,
+                                  duration: const Duration(milliseconds: 1000),
+                                  child: Icon(
+                                    Icons.upload,
+                                    size: 24,
+                                    color: Colors.white,
+                                    shadows: const [
+                                      Shadow(
+                                        blurRadius: 8.0,
+                                        color: Colors.black54,
+                                        offset: Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
                           ),
@@ -88,13 +172,10 @@ class UserInfoCard extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: Colors.blue,
                             shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.white,
-                              width: 2,
-                            ),
+                            border: Border.all(color: Colors.white, width: 2),
                           ),
                           child: const Icon(
-                            Icons.camera_alt,
+                            Icons.photo_library,
                             size: 16,
                             color: Colors.white,
                           ),
@@ -104,17 +185,41 @@ class UserInfoCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                Text(
-                  controller.userDisplayName,
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    shadows: [
-                      Shadow(
-                        blurRadius: 10.0,
-                        color: Colors.black26,
-                        offset: Offset(0, 2),
+                GestureDetector(
+                  onTap: controller.showEditNameDialog,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          controller.userDisplayName,
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            shadows: [
+                              Shadow(
+                                blurRadius: 10.0,
+                                color: Colors.black26,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Icon(
+                        Icons.edit,
+                        size: 18,
+                        color: Colors.white70,
+                        shadows: const [
+                          Shadow(
+                            blurRadius: 8.0,
+                            color: Colors.black26,
+                            offset: Offset(0, 1),
+                          ),
+                        ],
                       ),
                     ],
                   ),

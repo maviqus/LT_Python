@@ -28,6 +28,10 @@ class MusicPlayerController extends GetxController {
   final RxList<Music> playlist = <Music>[].obs;
   final RxInt currentIndex = 0.obs;
 
+  final RxBool isLoading = false.obs;
+  final RxBool isBuffering = false.obs;
+  final RxDouble loadingOpacity = 0.0.obs;
+
   String? _currentAudioUrl;
 
   @override
@@ -48,9 +52,22 @@ class MusicPlayerController extends GetxController {
     _audioPlayer.playerStateStream.listen((state) {
       isPlaying.value = state.playing;
 
-      // Auto-play
-      if (state.processingState == ProcessingState.completed) {
-        _autoPlayNext();
+      // Handle loading states with fade effects
+      switch (state.processingState) {
+        case ProcessingState.loading:
+        case ProcessingState.buffering:
+          _showLoadingWithFade();
+          break;
+        case ProcessingState.ready:
+          _hideLoadingWithFade();
+          break;
+        case ProcessingState.completed:
+          _hideLoadingWithFade();
+          _autoPlayNext();
+          break;
+        case ProcessingState.idle:
+          _hideLoadingWithFade();
+          break;
       }
     });
 
@@ -140,8 +157,40 @@ class MusicPlayerController extends GetxController {
     currentIndex.value = 0;
   }
 
+  // Fade loading effects methods
+  void _showLoadingWithFade() {
+    isLoading.value = true;
+    isBuffering.value = true;
+    loadingOpacity.value = 0.6;
+  }
+
+  void _hideLoadingWithFade() {
+    isLoading.value = false;
+    isBuffering.value = false;
+    loadingOpacity.value = 0.0;
+  }
+
+  // Animated fade methods for smooth transitions
+  void showLoadingFade({double opacity = 0.6, int durationMs = 300}) {
+    isLoading.value = true;
+    loadingOpacity.value = opacity;
+  }
+
+  void hideLoadingFade({int durationMs = 300}) {
+    loadingOpacity.value = 0.0;
+    // Delay hiding the loading state to allow fade animation to complete
+    Future.delayed(Duration(milliseconds: durationMs), () {
+      if (loadingOpacity.value == 0.0) {
+        isLoading.value = false;
+      }
+    });
+  }
+
   Future<void> playMusic(Music music) async {
     try {
+      // Show loading with fade effect
+      showLoadingFade();
+
       currentMusic.value = music;
       isPlayerVisible.value = true;
 
@@ -162,7 +211,10 @@ class MusicPlayerController extends GetxController {
       _saveState();
 
       await _loadAndPlay(music.audioUrl ?? '');
-    } catch (e) {}
+    } catch (e) {
+      // Hide loading on error
+      hideLoadingFade();
+    }
   }
 
   Future<void> togglePlayPause() async {
@@ -173,22 +225,32 @@ class MusicPlayerController extends GetxController {
         final audioUrl = currentMusic.value?.audioUrl;
         if (audioUrl != null) {
           if (_currentAudioUrl != audioUrl) {
+            // Show loading fade when switching tracks
+            showLoadingFade();
             await _loadAndPlay(audioUrl);
           } else {
             await _audioPlayer.play();
           }
         }
       }
-    } catch (e) {}
+    } catch (e) {
+      hideLoadingFade();
+    }
   }
 
   Future<void> _loadAndPlay(String audioUrl) async {
-    if (audioUrl.isEmpty) return;
+    if (audioUrl.isEmpty) {
+      hideLoadingFade();
+      return;
+    }
     try {
       await _audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(audioUrl)));
       _currentAudioUrl = audioUrl;
       await _audioPlayer.play();
-    } catch (e) {}
+      // Loading fade will be hidden automatically by playerStateStream
+    } catch (e) {
+      hideLoadingFade();
+    }
   }
 
   String get displayTitle => currentMusic.value?.title ?? cachedTitle.value;
@@ -196,6 +258,11 @@ class MusicPlayerController extends GetxController {
   String get displayCoverUrl =>
       currentMusic.value?.coverUrl ?? cachedCoverUrl.value;
   bool get hasData => displayTitle.isNotEmpty;
+
+  // Loading state getters for UI
+  bool get isLoadingWithFade => isLoading.value;
+  double get currentLoadingOpacity => loadingOpacity.value;
+  bool get isCurrentlyBuffering => isBuffering.value;
 
   void hide() {
     isPlayerVisible.value = false;
@@ -233,6 +300,9 @@ class MusicPlayerController extends GetxController {
   Future<void> playNext() async {
     if (playlist.isEmpty) return;
 
+    // Show loading fade for track transition
+    showLoadingFade(opacity: 0.4, durationMs: 200);
+
     int nextIndex = currentIndex.value + 1;
     if (nextIndex >= playlist.length) {
       nextIndex = 0;
@@ -245,6 +315,9 @@ class MusicPlayerController extends GetxController {
 
   Future<void> playPrevious() async {
     if (playlist.isEmpty) return;
+
+    // Show loading fade for track transition
+    showLoadingFade(opacity: 0.4, durationMs: 200);
 
     int prevIndex = currentIndex.value - 1;
     if (prevIndex < 0) {

@@ -25,6 +25,22 @@ class AuthController extends GetxController {
     }
   }
 
+  Future<void> signInAnonymously() async {
+    if (isLoading.value) return;
+    isLoading.value = true;
+    try {
+      final user = await AuthRepository().loginAnonymously();
+      if (user != null) {
+        _storage.write('isLoggedIn', true);
+        Get.offAllNamed(RouterName.root);
+      }
+    } catch (e) {
+      Get.snackbar('Lỗi', 'Đăng nhập ẩn danh thất bại: ${e.toString()}');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   Future<void> signOut() async {
     await AuthRepository().signOut();
     await _storage.write('isLoggedIn', false);
