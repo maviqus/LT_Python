@@ -82,10 +82,7 @@ class SignInPage extends GetView<AuthController> {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(28),
                             child: BackdropFilter(
-                              filter: ImageFilter.blur(
-                                sigmaX: 5,
-                                sigmaY: 5,
-                              ),
+                              filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
                               child: ElevatedButton(
                                 onPressed: controller.isLoading.value
                                     ? null
@@ -95,15 +92,11 @@ class SignInPage extends GetView<AuthController> {
                                   elevation: 0,
                                   shadowColor: Colors.transparent,
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                      28,
-                                    ),
+                                    borderRadius: BorderRadius.circular(28),
                                   ),
                                 ),
                                 child: AnimatedSwitcher(
-                                  duration: const Duration(
-                                    milliseconds: 300,
-                                  ),
+                                  duration: const Duration(milliseconds: 300),
                                   child: controller.isLoading.value
                                       ? SizedBox(
                                           key: const ValueKey('loading'),
@@ -112,20 +105,14 @@ class SignInPage extends GetView<AuthController> {
                                               'Signing in...',
                                               style: TextStyle(
                                                 fontSize: 16,
-                                                fontWeight:
-                                                    FontWeight.w600,
+                                                fontWeight: FontWeight.w600,
                                                 color: Colors.white,
                                                 shadows: [
                                                   Shadow(
                                                     blurRadius: 10.0,
                                                     color: Colors.black
-                                                        .withValues(
-                                                      alpha: 0.3,
-                                                    ),
-                                                    offset: const Offset(
-                                                      0,
-                                                      1,
-                                                    ),
+                                                        .withValues(alpha: 0.3),
+                                                    offset: const Offset(0, 1),
                                                   ),
                                                 ],
                                               ),
@@ -147,16 +134,15 @@ class SignInPage extends GetView<AuthController> {
                                                 'Continue with Google',
                                                 style: TextStyle(
                                                   fontSize: 16,
-                                                  fontWeight:
-                                                      FontWeight.w600,
+                                                  fontWeight: FontWeight.w600,
                                                   color: Colors.white,
                                                   shadows: [
                                                     Shadow(
                                                       blurRadius: 10.0,
                                                       color: Colors.black
                                                           .withValues(
-                                                        alpha: 0.3,
-                                                      ),
+                                                            alpha: 0.3,
+                                                          ),
                                                       offset: const Offset(
                                                         0,
                                                         1,
@@ -198,10 +184,7 @@ class SignInPage extends GetView<AuthController> {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(28),
                             child: BackdropFilter(
-                              filter: ImageFilter.blur(
-                                sigmaX: 5,
-                                sigmaY: 5,
-                              ),
+                              filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
                               child: ElevatedButton(
                                 onPressed: controller.isLoading.value
                                     ? null
@@ -211,39 +194,27 @@ class SignInPage extends GetView<AuthController> {
                                   elevation: 0,
                                   shadowColor: Colors.transparent,
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                      28,
-                                    ),
+                                    borderRadius: BorderRadius.circular(28),
                                   ),
                                 ),
                                 child: AnimatedSwitcher(
-                                  duration: const Duration(
-                                    milliseconds: 300,
-                                  ),
+                                  duration: const Duration(milliseconds: 300),
                                   child: controller.isLoading.value
                                       ? SizedBox(
-                                          key: const ValueKey(
-                                            'loading_anon',
-                                          ),
+                                          key: const ValueKey('loading_anon'),
                                           child: Center(
                                             child: Text(
                                               'Đang đăng nhập...',
                                               style: TextStyle(
                                                 fontSize: 16,
-                                                fontWeight:
-                                                    FontWeight.w600,
+                                                fontWeight: FontWeight.w600,
                                                 color: Colors.white,
                                                 shadows: [
                                                   Shadow(
                                                     blurRadius: 10.0,
                                                     color: Colors.black
-                                                        .withValues(
-                                                      alpha: 0.3,
-                                                    ),
-                                                    offset: const Offset(
-                                                      0,
-                                                      1,
-                                                    ),
+                                                        .withValues(alpha: 0.3),
+                                                    offset: const Offset(0, 1),
                                                   ),
                                                 ],
                                               ),
@@ -266,16 +237,15 @@ class SignInPage extends GetView<AuthController> {
                                                 'Đăng nhập ẩn danh',
                                                 style: TextStyle(
                                                   fontSize: 16,
-                                                  fontWeight:
-                                                      FontWeight.w600,
+                                                  fontWeight: FontWeight.w600,
                                                   color: Colors.white,
                                                   shadows: [
                                                     Shadow(
                                                       blurRadius: 10.0,
                                                       color: Colors.black
                                                           .withValues(
-                                                        alpha: 0.3,
-                                                      ),
+                                                            alpha: 0.3,
+                                                          ),
                                                       offset: const Offset(
                                                         0,
                                                         1,

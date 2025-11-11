@@ -10,6 +10,8 @@ import 'package:sleep_music/widgets/shared/root.dart';
 import 'package:sleep_music/modules/music/pages/music_page.dart';
 import 'package:sleep_music/modules/slash/pages/slash_page.dart';
 import 'package:sleep_music/modules/slash/bindings/slash_binding.dart';
+import 'package:sleep_music/modules/alarm/pages/alarm_page.dart';
+import 'package:sleep_music/modules/alarm/bindings/alarm_binding.dart';
 
 class RouterCustom {
   static final initial = RouterName.slash;
@@ -33,7 +35,8 @@ class RouterCustom {
     ),
     GetPage(
       name: RouterName.alarm,
-      page: () => Scaffold(body: Center(child: Text('Alarm Page'))),
+      page: () => const AlarmPage(),
+      binding: AlarmBinding(),
       curve: Curves.easeInOut,
     ),
     GetPage(

@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:sleep_music/modules/authencation/controller/authencation_controller.dart';
 import 'package:sleep_music/modules/slash/controllers/slash_controller.dart';
 import 'package:sleep_music/modules/music/controllers/music_controller.dart';
+import 'package:sleep_music/modules/alarm/controllers/alarm_controller.dart';
 
 class AppBinding extends Bindings {
   @override
@@ -9,5 +10,6 @@ class AppBinding extends Bindings {
     Get.put(AuthController());
     Get.put(SlashController());
     Get.put(MusicController());
+    Get.put(AlarmController());
   }
 }
